@@ -8,16 +8,11 @@ import org.nd4j.linalg.learning.config._
 import org.nd4j.linalg.activations.Activation
 import org.nd4j.linalg.lossfunctions.LossFunctions
 
-import scala.util.Random
-
 case class Player(id: String, var amount: Double, players: Int) {
 
   lazy val network: MultiLayerNetwork = {
-    val rngSeed = 123
-    val outputNum = 2
-
     val conf = new NeuralNetConfiguration.Builder()
-      .seed(rngSeed)
+      .seed(123)
       .updater(new Adam())
       .l2(1e-4)
       .list()
@@ -29,7 +24,7 @@ case class Player(id: String, var amount: Double, players: Int) {
         .build())
       .layer(new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD)
         .nIn(1)
-        .nOut(outputNum)
+        .nOut(1)
         .activation(Activation.SOFTMAX)
         .weightInit(WeightInit.XAVIER)
         .build())
