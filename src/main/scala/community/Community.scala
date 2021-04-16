@@ -1,18 +1,19 @@
 package community
 
-import player.{Altruist, Casual, Impostor, Intelligent, Player}
+import player.{Altruist, Casual, Impostor, Ordinary, Player}
 
-trait Community {
+case class Community(amount: Double, factor: Double) {
 
-  val amount: Double
-  val factor: Double
-  val players: List[Player]
+  private var players: List[Player] = Nil
+  private var depositsLogs: List[List[Double]] = Nil
 
-  lazy val size: Int = players.size
+  def size: Int = players.size
 
-  protected def round(): Unit = {
-    val pot = players.foldRight(0.0)((player, pot) => pot + player.deposit)
-    println("Pot: " + pot + "\n"  + state() + "\n")
+  def round(): Unit = {
+    val deposits = players.map(_.payIn)
+    depositsLogs ::= deposits
+    val pot = deposits.foldRight(0.0)((deposit, pot) => pot + deposit)
+    println("Pot: " + pot + "\n"  + statistic() + "\n")
     val payoff = factor * pot / size
     players.foreach(_.payout(payoff))
   }
@@ -21,33 +22,37 @@ trait Community {
     (1 to rounds).toList.foreach(_ => round())
   }
 
-  private def state(): String = {
-    players.groupBy(_.getClass.getSimpleName).mapValues(_.map(_.amount).sum).map {
-      case (c, avg) => c + ": " + avg
+  def withCasual(count: Int): Community = {
+    addPlayers(count, Casual(_, this))
+    this
+  }
+
+  def withAltruist(count: Int): Community = {
+    addPlayers(count, Altruist(_, this))
+    this
+  }
+
+  def withImpostor(count: Int): Community = {
+    addPlayers(count, Impostor(_, this))
+    this
+  }
+
+  def withOrdinary(count: Int): Community = {
+    addPlayers(count, Ordinary(_, this))
+    this
+  }
+
+  private def addPlayers(count: Int, playerCreation: String => Player): Unit = {
+    players ++= (1 to count).toList.map(id => playerCreation(id.toString))
+  }
+
+  private def statistic(): String = {
+    players.groupBy(_.getClass.getSimpleName).map {
+      case (name, players) => name + "[" + players.size + "]: " + players.map(_.amount).sum / players.size
     }.mkString("\n")
   }
 }
 
 object Community {
-  val empty: Community = new Community {
-    override val amount: Double = 0.0
-    override val factor: Double = 0.0
-    override val players: List[Player] = Nil
-  }
-
-  def create(a: Double, f: Double, casual: Int, altruist: Int, impostor: Int, intelligent: Int): Community = new Community {
-    override val amount: Double = a
-
-    override val factor: Double = f
-
-    override val players: List[Player] = {
-      def toPlayers(count: Int, playerCreation: String => Player): List[Player] = {
-        (1 to count).toList.map(id => playerCreation(id.toString))
-      }
-      toPlayers(casual, Casual(_, this)) ++
-        toPlayers(altruist, Altruist(_, this)) ++
-        toPlayers(impostor, Impostor(_, this)) ++
-        toPlayers(intelligent, Intelligent(_, this))
-    }
-  }
+  val empty: Community = new Community(0, 0)
 }

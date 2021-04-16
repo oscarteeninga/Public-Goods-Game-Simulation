@@ -22,7 +22,7 @@ object Personality {
   object Impostor extends Personality {
     override val altruism: Double = 0.0
     override val egoism: Double = 1.0
-    override val cooperating: Double = 1.0
+    override val cooperating: Double = 0.0
   }
 
   object Ordinary extends Personality {
