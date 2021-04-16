@@ -11,5 +11,5 @@ case class Casual(id: String, community: Community) extends Player {
 
   override protected def b2: Double = Random.nextDouble()
 
-  override val personality: Personality = Personality.Ordinary
+  override val personality: Personality = Personality.ordinary
 }

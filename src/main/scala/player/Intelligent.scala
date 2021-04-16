@@ -16,7 +16,7 @@ case class Intelligent(id: String, community: Community) extends Player {
 
   override protected def b2: Double = ???
 
-  override val personality: Personality = Personality.Erudite
+  override val personality: Personality = Personality.ordinary
 
   lazy val network: MultiLayerNetwork = {
     val conf = new NeuralNetConfiguration.Builder()

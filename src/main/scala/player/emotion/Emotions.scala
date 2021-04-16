@@ -1,23 +1,34 @@
 package player.emotion
 
-case class Emotions(var angry: Int, var thankfulness: Int) {
+import javax.json.{Json, JsonObject}
 
-  def update(payIn: Double, payOff: Double): Unit = {
-    if (payIn/payOff > 1.5) updateAngry(1)
-    if (payIn/payOff > 1.25) updateThankfulness(-1)
-    if (payOff/payIn > 1.25) updateThankfulness(1)
-    if (payOff/payIn > 1.5) updateAngry(-1)
+case class Emotions(angry: Int, thankfulness: Int) {
+
+  def update(payIn: Double, payOff: Double): Emotions = {
+    if (payOff < 1.5 * payIn) {
+      Emotions(between(angry + 1), between(thankfulness - 1))
+    } else {
+      Emotions(between(angry - 1), between(thankfulness + 1))
+    }
   }
 
-  private def updateAngry(value: Int): Unit = {
-    angry = Math.max(0, Math.min(10, angry+value))
-  }
-
-  private def updateThankfulness(value: Int): Unit = {
-    thankfulness = Math.max(0, Math.min(10, thankfulness+value))
+  private def between(value: Int, min: Int = 0, max: Int = 10): Int = {
+    if (value < min) min
+    else if (value > max) max
+    else value
   }
 
   def emotionFactor: Double = {
-    1.0 - 2*angry/20 + thankfulness/20
+    1.0 + (thankfulness - angry)/10
+  }
+
+  def +(other: Emotions): Emotions = {
+    Emotions((this.angry + other.angry)/2, (this.thankfulness + other.thankfulness)/2)
+  }
+
+  def toJson: JsonObject = Json.createObjectBuilder().add("angry", angry).add("thanfulness", thankfulness).build()
+
+  override def toString: String = {
+    toJson.toString
   }
 }

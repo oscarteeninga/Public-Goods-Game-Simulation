@@ -10,18 +10,18 @@ trait Player {
 
   val id: String
   val personality: Personality
-  val emotions: Emotions = Emotions(Random.nextInt() % 10, Random.nextInt() % 10)
+  var emotions: Emotions = Emotions(5, 5)
   val community: Community
   val neighbourhood: Community = Community.empty
 
   var amount: Double = community.amount
-  protected var lastPayoff: Double = 0
-  protected var lastPayIn: Double = amount / 2
+  var lastPayoff: Double = 0
+  var lastPayIn: Double = amount / 2
 
   def payout(payoff: Double): Unit = {
-    emotions.update(lastPayIn, payoff)
     lastPayoff = payoff
     amount += payoff
+    emotions = emotions.update(lastPayIn, lastPayoff)
   }
 
   protected def b1: Double = emotions.emotionFactor * abs(personality.altruism * 0.75 + personality.cooperating * 0.25 - personality.egoism * 0.5) / 2
