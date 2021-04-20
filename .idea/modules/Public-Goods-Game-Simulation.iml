@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module external.linked.project.id="public-goods-game-simulation [file:/Users/oscarteeninga/Library/Mobile%20Documents/com~apple~CloudDocs/Semestr%208/Public-Goods-Game-Simulation/]" external.linked.project.path="$MODULE_DIR$/../.." external.root.project.path="$MODULE_DIR$/../.." external.system.id="SBT" type="JAVA_MODULE" version="4">
-  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_11">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_8">
     <output url="file://$MODULE_DIR$/../../target/scala-2.11/classes" />
     <output-test url="file://$MODULE_DIR$/../../target/scala-2.11/test-classes" />
     <exclude-output />
@@ -183,13 +183,13 @@
     <orderEntry type="library" name="sbt: org.nd4j:nd4j-native:1.0.0-beta7:windows-x86_64:jar" level="project" />
     <orderEntry type="library" name="sbt: org.nd4j:nd4j-tensorflow:1.0.0-beta7:jar" level="project" />
     <orderEntry type="library" name="sbt: org.nd4j:protobuf:1.0.0-beta7:jar" level="project" />
-    <orderEntry type="library" name="sbt: org.openjfx:javafx-base:11:jar" level="project" />
-    <orderEntry type="library" name="sbt: org.openjfx:javafx-base:11:mac:jar" level="project" />
-    <orderEntry type="library" name="sbt: org.openjfx:javafx-graphics:11:jar" level="project" />
-    <orderEntry type="library" name="sbt: org.openjfx:javafx-graphics:11:mac:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.plotly-scala:plotly-core_2.11:0.7.0:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.plotly-scala:plotly-render_2.11:0.7.0:jar" level="project" />
     <orderEntry type="library" name="sbt: org.scala-lang:scala-library:2.11.11:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.scala-lang:scala-reflect:2.11.11:jar" level="project" />
     <orderEntry type="library" name="sbt: org.slf4j:slf4j-api:1.7.24:jar" level="project" />
     <orderEntry type="library" name="sbt: org.threadly:threadly:4.10.0:jar" level="project" />
     <orderEntry type="library" name="sbt: org.threeten:threetenbp:1.3.3:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.webjars.bower:plotly.js:1.41.3:jar" level="project" />
   </component>
 </module>

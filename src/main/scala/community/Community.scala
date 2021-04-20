@@ -31,7 +31,10 @@ case class Community(amount: Double, factor: Double) {
   }
 
   def play(rounds: Int): Unit = {
-    (1 to rounds).toList.foreach(round)
+    if (rounds > 0) {
+      round(rounds)
+      play(rounds-1)
+    }
   }
 
   def withCasual(count: Int): Community = {
