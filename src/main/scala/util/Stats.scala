@@ -1,7 +1,5 @@
 package util
 
-
-
 case class Stats(stats: List[Stat]) {
 
   def statsByRound: Map[Int, List[Stat]] = stats.groupBy(stat => stat.round)
@@ -42,6 +40,22 @@ case class Stats(stats: List[Stat]) {
 
   def emotionToPayIn: List[(String, List[(Int, Double)])] = {
     List("angry" -> angryToPayIn, "thankfulness" -> thankfulnessToPayIn)
+  }
+
+  def angryToAmount: List[(Int, Double)] = {
+    stats.map {
+      stat => (stat.emotions.angry, stat.amount)
+    }.groupBy(_._1).mapValues(payIns => payIns.map(_._2).sum / payIns.size).toList.sortBy(_._1)
+  }
+
+  def thankfulnessToAmount: List[(Int, Double)] = {
+    stats.map {
+      stat => (stat.emotions.thankfulness, stat.amount)
+    }.groupBy(_._1).mapValues(payIns => payIns.map(_._2).sum / payIns.size).toList.sortBy(_._1)
+  }
+
+  def emotionToAmount: List[(String, List[(Int, Double)])] = {
+    List("angry" -> angryToAmount, "thankfulness" -> thankfulnessToAmount)
   }
 
   override def toString: String = {
