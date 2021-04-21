@@ -1,18 +1,16 @@
 package game
 
 import community.Community
-import util.Stats
+import util.Plot
+
 
 object Department extends App {
   val manhattan = Community(10.0, 1.5)
-    .withAltruist(1)
-    .withCasual(1)
-    .withImpostor(1)
-    .withOrdinary(1)
+    .withAltruist(2)
+    .withImpostor(2)
+    .withOrdinary(2)
 
   manhattan.play(20)
 
-  manhattan.statistics.toList.sortBy(_._1)(Ordering.Int).map {
-    case (round, stats) => "Runda " + round + "\n" + Stats.statsToString(Stats.groupByPersonality(stats))
-  }.foreach(println)
+  Plot.plot_scatter(manhattan.getStats.emotionToPayIn, "Emotion intense", "Pay In", manhattan.config)
 }

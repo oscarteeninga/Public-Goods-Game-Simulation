@@ -1,14 +1,26 @@
 package player.emotion
 
 import javax.json.{Json, JsonObject}
+import scala.util.Random
 
 case class Emotions(angry: Int, thankfulness: Int) {
 
   def update(payIn: Double, payOff: Double): Emotions = {
+    val rand = Math.abs(Random.nextInt()) % 3
     if (payOff < 1.5 * payIn) {
-      Emotions(between(angry + 1), between(thankfulness - 1))
+      rand match {
+        case 0 => Emotions(between(angry + 1), between(thankfulness - 1))
+        case 1 => Emotions(between(angry + 1), between(thankfulness))
+        case 2 => Emotions(between(angry), between(thankfulness - 1))
+        case 4 => Emotions(between(angry), between(thankfulness))
+      }
     } else {
-      Emotions(between(angry - 1), between(thankfulness + 1))
+      rand match {
+        case 0 => Emotions(between(angry - 1), between(thankfulness + 1))
+        case 1 => Emotions(between(angry - 1), between(thankfulness))
+        case 2 => Emotions(between(angry), between(thankfulness + 1))
+        case 4 => Emotions(between(angry), between(thankfulness))
+      }
     }
   }
 

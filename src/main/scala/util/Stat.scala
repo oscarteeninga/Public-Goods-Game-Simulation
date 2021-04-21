@@ -4,10 +4,11 @@ import player.emotion.{Emotions, Personality}
 
 import javax.json.{Json, JsonBuilderFactory, JsonObject}
 
-case class Stat(personality: Personality, emotions: Emotions, amount: Double, payIn: Double, payOff: Double) {
+case class Stat(round: Int, personality: Personality, emotions: Emotions, amount: Double, payIn: Double, payOff: Double) {
 
   def toJson: JsonObject =
     Json.createObjectBuilder()
+      .add("round", round)
       .add("personality", personality.toJson)
       .add("emotions", emotions.toJson)
       .add("amount", amount)

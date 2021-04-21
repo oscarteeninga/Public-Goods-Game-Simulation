@@ -1,12 +1,12 @@
 package community
 
 import player.{Altruist, Casual, Impostor, Ordinary, Player}
-import util.Stat
+import util.{Stat, Stats}
 
 case class Community(amount: Double, factor: Double) {
 
   private var players: List[Player] = Nil
-  var statistics:  Map[Int, List[Stat]] = Map.empty
+  var statistics:  List[Stat] = List.empty
 
   def size: Int = players.size
 
@@ -20,21 +20,17 @@ case class Community(amount: Double, factor: Double) {
   }
 
   private def updateStatistics(roundIndex: Int): Unit = {
-    statistics += (roundIndex -> players.map(player => Stat(player.personality, player.emotions, player.amount, player.lastPayIn, player.lastPayoff)))
+    statistics ++= players.map(player => Stat(roundIndex, player.personality, player.emotions, player.amount, player.lastPayIn, player.lastPayoff))
   }
 
-  def round(roundIndex: Int): List[Stat] = {
+  def round(roundIndex: Int): Unit = {
     val pot = payIns()
     payOuts(pot)
     updateStatistics(roundIndex)
-    statistics(roundIndex)
   }
 
   def play(rounds: Int): Unit = {
-    if (rounds > 0) {
-      round(rounds)
-      play(rounds-1)
-    }
+    (1 to rounds).toList.foreach(idx => round(idx))
   }
 
   def withCasual(count: Int): Community = {
@@ -61,7 +57,13 @@ case class Community(amount: Double, factor: Double) {
     players ++= (1 to count).toList.map(id => playerCreation(id.toString))
   }
 
-  def getStatistic: Map[Int, List[Stat]] = statistics
+  def config: String = {
+    players.groupBy(_.personality.name).mapValues(_.size).map {
+      case (name, size) => name + ": " + size
+    }.mkString(", ")
+  }
+
+  def getStats: Stats = Stats(statistics.sortBy(_.round)(Ordering.Int))
 }
 
 object Community {
