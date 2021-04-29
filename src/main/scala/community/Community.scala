@@ -6,6 +6,7 @@ import util.{Stat, Stats}
 case class Community(amount: Double, factor: Double) {
 
   private var players: List[Player] = Nil
+  var president: Option[Int] = None
   var statistics:  List[Stat] = List.empty
 
   def size: Int = players.size
@@ -27,10 +28,23 @@ case class Community(amount: Double, factor: Double) {
     val pot = payIns()
     payOuts(pot)
     updateStatistics(roundIndex)
+    getPresident.foreach(_.action)
+  }
+
+  def voting: Unit = {
+    president = players.flatMap(_.vote).groupBy(_).mapValues(_.size).
   }
 
   def play(rounds: Int): Unit = {
     (1 to rounds).toList.foreach(idx => round(idx))
+  }
+
+  def getPresident: Option[Player] = {
+    president.map(players)
+  }
+
+  def setPresident(id: Int): Unit = {
+    president = Some(id)
   }
 
   def withCasual(count: Int): Community = {
