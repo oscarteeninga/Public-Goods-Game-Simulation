@@ -3,11 +3,15 @@ package community
 import player.{Altruist, Casual, Impostor, Ordinary, Player}
 import util.{Stat, Stats}
 
+import scala.math.abs
+
 case class Community(amount: Double, factor: Double) {
 
   private var players: List[Player] = Nil
   var president: Option[Int] = None
   var statistics:  List[Stat] = List.empty
+  var b1_factors: (Double, Double, Double) = (0.75, 0.25, 1.0)
+  var b2_factors: (Double, Double, Double) = (0.75, 0.25, 0.5)
 
   def size: Int = players.size
 
@@ -32,11 +36,19 @@ case class Community(amount: Double, factor: Double) {
   }
 
   def voting: Unit = {
-    president = players.flatMap(_.vote).groupBy(_).mapValues(_.size).
+    president = Some(players.flatMap(_.vote).groupBy(identity).mapValues(_.size).toList.maxBy(_._2)._2)
   }
 
-  def play(rounds: Int): Unit = {
-    (1 to rounds).toList.foreach(idx => round(idx))
+  def b(player: Player, factor: (Double, Double, Double)): Double = {
+    player.emotions.emotionFactor * abs(player.personality.altruism * factor._1 + player.personality.cooperating * factor._2 - player.personality.egoism * factor._3) / 2
+  }
+
+  def b1(player: Player): Double = b(player, b1_factors)
+
+  def b2(player: Player): Double = b(player, b2_factors)
+
+  def play(rounds: Int, start: Int = 1): Unit = {
+    (start to rounds).toList.foreach(idx => round(idx))
   }
 
   def getPresident: Option[Player] = {

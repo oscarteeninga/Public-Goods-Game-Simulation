@@ -11,6 +11,9 @@ object Department extends App {
     .withOrdinary(4)
 
   manhattan.play(20)
+  manhattan.voting
+
+  manhattan.play(20, start = 20)
 
   Plot.plot_scatter(manhattan.getStats.emotionToAmount, "Emotion intense", "Amount", manhattan.config)
   Plot.plot_scatter(manhattan.getStats.emotionToPayIn, "Emotion intense", "Pay in", manhattan.config)

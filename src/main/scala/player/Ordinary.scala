@@ -5,9 +5,10 @@ import player.emotion.Personality
 
 case class Ordinary(id: String, community: Community) extends Player {
 
-  override protected def b1: Double = 0.5
-
-  override protected def b2: Double = 0.5
-
   override val personality: Personality = Personality.ordinary
+
+  override def action: Unit = {
+    community.b2_factors = (1.0, 0.0, 1.0)
+    community.b1_factors = (1.0, 0.0, 1.0)
+  }
 }

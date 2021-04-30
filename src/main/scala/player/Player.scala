@@ -3,7 +3,7 @@ package player
 import community.Community
 import player.emotion.{Emotions, Personality}
 
-import scala.math.{abs, max, min}
+import scala.math.{max, min}
 import scala.util.Random
 
 trait Player extends President {
@@ -24,14 +24,10 @@ trait Player extends President {
     emotions = emotions.update(lastPayIn, lastPayoff)
   }
 
-  protected def b1: Double = emotions.emotionFactor * abs(personality.altruism * 0.75 + personality.cooperating * 0.25 - personality.egoism * 0.5) / 2
+  protected def randomFactor: Double = (2 + (0.5 - Random.nextDouble())) / 2
 
-  protected def b2: Double = emotions.emotionFactor * abs(personality.altruism * 0.75 + personality.cooperating * 0.25 - personality.egoism * 1.0) / 2
-
-  private def randomFactor: Double = (2 + (0.5 - Random.nextDouble())) / 2
-
-  private def contribution: Double = {
-    min(amount,  randomFactor * max(b1 * lastPayoff + b2 * (lastPayIn * community.size - lastPayoff) / (community.size - 1), 0))
+  protected def contribution: Double = {
+    min(amount,  randomFactor * max(community.b1(this) * lastPayoff + community.b2(this) * (lastPayIn * community.size - lastPayoff) / (community.size - 1), 0))
   }
 
   def payIn: Double = {

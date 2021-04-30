@@ -12,10 +12,6 @@ import player.emotion.Personality
 
 case class Intelligent(id: String, community: Community) extends Player {
 
-  override protected def b1: Double = ???
-
-  override protected def b2: Double = ???
-
   override val personality: Personality = Personality.ordinary
 
   lazy val network: MultiLayerNetwork = {
@@ -42,4 +38,6 @@ case class Intelligent(id: String, community: Community) extends Player {
     net.init()
     net
   }
+
+  override def action: Unit = ???
 }
