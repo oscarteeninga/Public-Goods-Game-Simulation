@@ -6,7 +6,7 @@ object Department extends App {
   val manhattan = Community(10.0)
     .withAltruist(7)
     .withImpostor(1)
-    .withOrdinary(4)
+    .withCasual(4)
     .withDemocrat
     .withRepublican
 
@@ -16,7 +16,7 @@ object Department extends App {
   val extendManhattan = manhattan
     .withImpostor(10)
 
-  extendManhattan.play(20, start = 20)
+  extendManhattan.play(20)
   extendManhattan.voting
 
 //  Plot.plot_scatter(manhattan.getStats.emotionToAmount, "Emotion intense", "Amount", manhattan.config)

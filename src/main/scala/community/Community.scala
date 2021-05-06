@@ -1,6 +1,6 @@
 package community
 
-import player.president.{Democrat, President, Republican}
+import player.president.{Democrat, Candidate, Republican}
 import player.{Altruist, Casual, Impostor, Ordinary, Player}
 import util.{Stat, Stats}
 
@@ -8,8 +8,8 @@ import scala.math.abs
 
 case class Community(amount: Double) {
 
-  var candidates: List[President] = Nil
-  var president: Option[President] = None
+  var candidates: List[Candidate] = Nil
+  var president: Option[Candidate] = None
   var citizen: List[Player] = Nil
   var statistics:  List[Stat] = List.empty
   var b1_factors: (Double, Double, Double) = (0.75, 0.25, 1.0)
@@ -17,15 +17,16 @@ case class Community(amount: Double) {
 
   def players: List[Player] = candidates ++ citizen
 
-  def size: Int = citizen.size
+  def factor: Double = {
+    president.map(_.factor).getOrElse(1.5)
+  }
 
   private def payIns(): Double = {
     players.map(_.payIn).sum
   }
 
-  private def payOuts(pot: Double): Unit = {
-    val payOff = pot * getFactor / size
-    players.foreach(_.payout(payOff))
+  private def payouts(pot: Double): Unit = {
+    players.foreach(_.payout(pot / players.size))
   }
 
   private def payPresident(pot: Double): Double = {
@@ -33,30 +34,22 @@ case class Community(amount: Double) {
       case Some(president) =>
         val salary = president.salary
         president.payout(salary)
+        president.action
         pot - salary
       case None => pot
     }
   }
 
-  private def updateStatistics(roundIndex: Int): Unit = {
-    statistics ++= players.map(player => Stat(roundIndex, player.personality, player.emotions, player.amount, player.lastPayIn, player.lastPayoff))
-  }
-
   def round(roundIndex: Int): Unit = {
-    val pot = payPresident(payIns())
-    payOuts(pot)
+    val pot = factor * payIns()
+    payouts(payPresident(pot))
     updateStatistics(roundIndex)
-    president.foreach(_.action)
   }
 
-  def voting: Unit = {
-    val votes = players.flatMap(_.vote)
-    if (votes.isEmpty) {
-      president = None
-    } else {
-      val id = votes.groupBy(identity).mapValues(_.size).toList.sortBy(_._2).reverse.head._1
-      president = Some(candidates(id))
-    }
+  def voting(): Unit = {
+    val votes = players.flatMap(_.vote).groupBy(identity).mapValues(_.size).toList
+    if (votes.nonEmpty)
+      president = Some(candidates(votes.maxBy(_._2)._1))
   }
 
   def b(player: Player, factor: (Double, Double, Double)): Double = {
@@ -67,16 +60,8 @@ case class Community(amount: Double) {
 
   def b2(player: Player): Double = b(player, b2_factors)
 
-  def play(rounds: Int, start: Int = 1): Unit = {
-    (start to rounds).toList.foreach(idx => round(idx))
-  }
-
-  def setPresident(id: Int): Unit = {
-    president = Some(id).map(candidates)
-  }
-
-  def getFactor: Double = {
-    president.map(_.factor).getOrElse(1.5)
+  def play(rounds: Int): Unit = {
+    (statistics.size to (rounds + statistics.size)).toList.foreach(idx => round(idx))
   }
 
   def withCasual(count: Int): Community = {
@@ -104,20 +89,24 @@ case class Community(amount: Double) {
   }
 
   def withRepublican: Community = {
-    candidates ++= Seq(Republican((candidates.size).toString, this))
+    candidates ++= Seq(Republican(candidates.size.toString, this))
     this
   }
 
   def withDemocrat: Community = {
-    candidates ++= Seq(Democrat((candidates.size).toString, this))
+    candidates ++= Seq(Democrat(candidates.size.toString, this))
     this
   }
 
   def config: String = {
-    citizen.groupBy(_.personality.name).mapValues(_.size).map {
+    players.groupBy(_.personality.name).mapValues(_.size).map {
       case (name, size) => name + ": " + size
     }.mkString(", ")
   }
 
-  def getStats: Stats = Stats(statistics.sortBy(_.round)(Ordering.Int))
+  private def updateStatistics(roundIndex: Int): Unit = {
+    statistics ++= players.map(player => Stat(roundIndex, player.personality, player.emotions, player.amount, player.lastPayIn, player.lastPayoff))
+  }
+
+  def getStats: Stats = Stats(statistics.sortBy(_.round))
 }
