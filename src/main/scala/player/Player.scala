@@ -6,16 +6,18 @@ import player.emotion.{Emotions, Personality}
 import scala.math.{max, min}
 import scala.util.Random
 
-trait Player extends President {
+trait Player {
 
   val id: String
   val personality: Personality
-  var emotions: Emotions = Emotions(5, 5)
   val community: Community
-  val neighbourhood: Community = Community.empty
 
+  def vote: Option[Int]
+
+  var emotions: Emotions = Emotions(5, 5)
   var amount: Double = community.amount
-  var lastPayoff: Double = 0
+
+  var lastPayoff: Double = amount / 2
   var lastPayIn: Double = amount / 2
 
   def payout(payoff: Double): Unit = {
@@ -34,10 +36,6 @@ trait Player extends President {
     lastPayIn = contribution
     amount -= lastPayIn
     lastPayIn
-  }
-
-  def vote: Option[Int] = {
-    Some(Random.nextInt() % community.size)
   }
 
   override def toString: String = {

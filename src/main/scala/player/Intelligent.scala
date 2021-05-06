@@ -39,5 +39,5 @@ case class Intelligent(id: String, community: Community) extends Player {
     net
   }
 
-  override def action: Unit = ???
+  override def vote: Option[Int] = ???
 }
