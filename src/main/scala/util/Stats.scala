@@ -4,58 +4,46 @@ case class Stats(stats: List[Stat]) {
 
   def statsByRound: Map[Int, List[Stat]] = stats.groupBy(stat => stat.round)
 
-  def personalityToAmount: List[(String, List[(Int, Double)])] = {
+  def personalityToAmount: List[(String, List[(Double, Double)])] = {
     stats.map {
-      stat => (stat.personality.name, stat.round, stat.amount)
-    }.groupBy(_._1).mapValues(stats => stats.map(s => (s._2, s._3)).sortBy(_._1)).toList
+      stat => (stat.personality.name, stat.round.toDouble, stat.amount)
+    }.groupBy(_._1).mapValues(stats => stats.map(s => (s._2, s._3)).groupBy(_._1).mapValues(x => x.map(_._2).sum/x.size).toList.sortBy(_._1)).toList
   }
 
-  def personalityToEmotion: List[(String, List[(Int, Double)])] = {
+  def personalityToEmotion: List[(String, List[(Double, Double)])] = {
     val angry = stats.map {
-      stat => (stat.personality.name + "-angry", stat.round, stat.emotions.angry)
-    }.groupBy(_._1).mapValues(stats => stats.map(s => (s._2, s._3.toDouble)))
+      stat => (stat.personality.name + "-" + stat.emotions.head._1, stat.round.toDouble, stat.emotions.head._2)
+    }.groupBy(_._1).mapValues(stats => stats.map(s => (s._2, s._3)).groupBy(_._1).mapValues(x => x.map(_._2).sum/x.size).toList.sortBy(_._1))
     val thankfulness = stats.map {
-      stat => (stat.personality.name + "-thankfulness", stat.round, stat.emotions.thankfulness)
-    }.groupBy(_._1).mapValues(stats => stats.map(s => (s._2, s._3.toDouble)))
+      stat => (stat.personality.name + "-" + stat.emotions.last._1, stat.round.toDouble, stat.emotions.last._2)
+    }.groupBy(_._1).mapValues(stats => stats.map(s => (s._2, s._3)).groupBy(_._1).mapValues(x => x.map(_._2).sum/x.size).toList.sortBy(_._1))
     (angry ++ thankfulness).toList
   }
 
-  def personalityToPayIn: List[(String, List[(Int, Double)])] = {
+  def personalitiesToPayIn: List[(String, List[(Double, Double)])] = {
     stats.map {
-      stat => (stat.personality.name, stat.round, stat.payIn)
-    }.groupBy(_._1).mapValues(stats => stats.map(s => (s._2, s._3)).sortBy(_._1)).toList
+      stat => (stat.personality.name, stat.round.toDouble, stat.payIn)
+    }.groupBy(_._1).mapValues(stats => stats.map(s => (s._2, s._3)).groupBy(_._1).mapValues(x => x.map(_._2).sum/x.size).toList.sortBy(_._1)).toList
   }
 
-  def angryToPayIn: List[(Int, Double)] = {
+  def emotionToPayIn(emotionIndex: Int): List[(Double, Double)] = {
     stats.map {
-      stat => (stat.emotions.angry, stat.payIn)
+      stat => (stat.emotions(emotionIndex)._2, stat.payIn)
     }.groupBy(_._1).mapValues(payIns => payIns.map(_._2).sum / payIns.size).toList.sortBy(_._1)
   }
 
-  def thankfulnessToPayIn: List[(Int, Double)] = {
+  def emotionsToPayIn: List[(String, List[(Double, Double)])] = {
+    List("angry" -> emotionToPayIn(0), "thankfulness" -> emotionToPayIn(1))
+  }
+
+  def emotionToAmount(emotionIndex: Int): List[(Double, Double)] = {
     stats.map {
-      stat => (stat.emotions.thankfulness, stat.payIn)
+      stat => (stat.emotions(emotionIndex)._2, stat.amount)
     }.groupBy(_._1).mapValues(payIns => payIns.map(_._2).sum / payIns.size).toList.sortBy(_._1)
   }
 
-  def emotionToPayIn: List[(String, List[(Int, Double)])] = {
-    List("angry" -> angryToPayIn, "thankfulness" -> thankfulnessToPayIn)
-  }
-
-  def angryToAmount: List[(Int, Double)] = {
-    stats.map {
-      stat => (stat.emotions.angry, stat.amount)
-    }.groupBy(_._1).mapValues(payIns => payIns.map(_._2).sum / payIns.size).toList.sortBy(_._1)
-  }
-
-  def thankfulnessToAmount: List[(Int, Double)] = {
-    stats.map {
-      stat => (stat.emotions.thankfulness, stat.amount)
-    }.groupBy(_._1).mapValues(payIns => payIns.map(_._2).sum / payIns.size).toList.sortBy(_._1)
-  }
-
-  def emotionToAmount: List[(String, List[(Int, Double)])] = {
-    List("angry" -> angryToAmount, "thankfulness" -> thankfulnessToAmount)
+  def emotionsToAmount: List[(String, List[(Double, Double)])] = {
+    List("angry" -> emotionToAmount(0), "thankfulness" -> emotionToAmount(1))
   }
 
   override def toString: String = {

@@ -8,11 +8,12 @@ import org.deeplearning4j.nn.weights.WeightInit
 import org.nd4j.linalg.activations.Activation
 import org.nd4j.linalg.learning.config.Adam
 import org.nd4j.linalg.lossfunctions.LossFunctions
-import player.emotion.Personality
+import player.personality.Personality
+import player.personality.Personality.Neutral
 
 case class Intelligent(id: String, community: Community) extends Player {
 
-  override val personality: Personality = Personality.ordinary
+  override val personality: Personality = Neutral
 
   lazy val network: MultiLayerNetwork = {
     val conf = new NeuralNetConfiguration.Builder()
@@ -39,5 +40,9 @@ case class Intelligent(id: String, community: Community) extends Player {
     net
   }
 
-  override def vote: Option[Int] = ???
+  override def vote: Option[Int] = None
+
+  override def updateSympathize: Unit = {
+
+  }
 }

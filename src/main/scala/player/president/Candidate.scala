@@ -4,6 +4,6 @@ import player.Player
 
 trait Candidate extends Player {
   def action: Unit
-  def factor: Double
+  def multiplier: Double
   def salary: Double
 }

@@ -1,18 +1,24 @@
 package player.president
 import community.Community
-import player.emotion.Personality
+import player.personality.Personality
+import player.personality.Personality.Altruistic
 
 case class Democrat(id: String, community: Community) extends Candidate {
+
+  override val personality: Personality = Altruistic
 
   override def action: Unit = {
 
   }
 
-  override def factor: Double = 2.0
+  override def multiplier: Double = 2.0
 
-  override def salary: Double = 5.0
+  override def salary: Double = 7.5
 
-  override val personality: Personality = Personality.altruistic
 
   override def vote: Option[Int] = None
+
+  override def updateSympathize: Unit = {
+
+  }
 }

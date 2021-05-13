@@ -1,28 +1,21 @@
 package game
 
 import community.Community
+import util.{Parameters, Plot}
 
 object Department extends App {
-  val manhattan = Community(10.0)
-    .withAltruist(7)
-    .withImpostor(1)
-    .withCasual(4)
-    .withDemocrat
-    .withRepublican
+  val manhattan = Community(Parameters.Community.amount)
+    .withCooperator(Parameters.Community.cooperators)
+    .withImpostor(Parameters.Community.impostors)
+    .withOrdinary(Parameters.Community.ordinaries)
 
-  manhattan.play(20)
-  manhattan.voting
+  manhattan.play(Parameters.Community.rounds)
+//  manhattan.voting()
 
-  val extendManhattan = manhattan
-    .withImpostor(10)
-
-  extendManhattan.play(20)
-  extendManhattan.voting
-
-//  Plot.plot_scatter(manhattan.getStats.emotionToAmount, "Emotion intense", "Amount", manhattan.config)
-//  Plot.plot_scatter(manhattan.getStats.emotionToPayIn, "Emotion intense", "Pay in", manhattan.config)
-//  Plot.plot_scatter(manhattan.getStats.personalityToPayIn, "Round", "Pay in", manhattan.config)
-//  Plot.plot_scatter(manhattan.getStats.personalityToAmount, "Round", "Amount", manhattan.config)
-//  Plot.plot_scatter(manhattan.getStats.personalityToEmotion, "Round", "Emotion intense", manhattan.config)
+  Plot.plot_scatter(manhattan.getStats.emotionsToAmount, "Emotion intense", "Amount", manhattan.config)
+  Plot.plot_scatter(manhattan.getStats.emotionsToPayIn, "Emotion intense", "Pay in", manhattan.config)
+  Plot.plot_scatter(manhattan.getStats.personalitiesToPayIn, "Round", "Pay in", manhattan.config)
+  Plot.plot_scatter(manhattan.getStats.personalityToAmount, "Round", "Amount", manhattan.config)
+  Plot.plot_scatter(manhattan.getStats.personalityToEmotion, "Round", "Emotion intense", manhattan.config)
 
 }

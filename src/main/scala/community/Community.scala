@@ -1,10 +1,8 @@
 package community
 
-import player.president.{Democrat, Candidate, Republican}
-import player.{Altruist, Casual, Impostor, Ordinary, Player}
-import util.{Stat, Stats}
-
-import scala.math.abs
+import player.president.{Candidate, Democrat, Republican}
+import player.{Cooperator, Impostor, Ordinary, Player}
+import util.{Parameters, Stat, Stats}
 
 case class Community(amount: Double) {
 
@@ -12,13 +10,15 @@ case class Community(amount: Double) {
   var president: Option[Candidate] = None
   var citizen: List[Player] = Nil
   var statistics:  List[Stat] = List.empty
-  var b1_factors: (Double, Double, Double) = (0.75, 0.25, 1.0)
-  var b2_factors: (Double, Double, Double) = (0.75, 0.25, 0.5)
+  var b1: (Double, Double) = Parameters.Community.b1
+  var b2: (Double, Double) = Parameters.Community.b2
+
+  def size: Int = players.size
 
   def players: List[Player] = candidates ++ citizen
 
-  def factor: Double = {
-    president.map(_.factor).getOrElse(1.5)
+  def multiplier: Double = {
+    president.map(_.multiplier).getOrElse(Parameters.Community.multiplier)
   }
 
   private def payIns(): Double = {
@@ -41,9 +41,9 @@ case class Community(amount: Double) {
   }
 
   def round(roundIndex: Int): Unit = {
-    val pot = factor * payIns()
-    payouts(payPresident(pot))
     updateStatistics(roundIndex)
+    val pot = multiplier * payIns()
+    payouts(payPresident(pot))
   }
 
   def voting(): Unit = {
@@ -52,25 +52,12 @@ case class Community(amount: Double) {
       president = Some(candidates(votes.maxBy(_._2)._1))
   }
 
-  def b(player: Player, factor: (Double, Double, Double)): Double = {
-    player.emotions.emotionFactor * abs(player.personality.altruism * factor._1 + player.personality.cooperating * factor._2 - player.personality.egoism * factor._3) / 2
-  }
-
-  def b1(player: Player): Double = b(player, b1_factors)
-
-  def b2(player: Player): Double = b(player, b2_factors)
-
   def play(rounds: Int): Unit = {
     (statistics.size to (rounds + statistics.size)).toList.foreach(idx => round(idx))
   }
 
-  def withCasual(count: Int): Community = {
-    addPlayers(count, Casual(_, this))
-    this
-  }
-
-  def withAltruist(count: Int): Community = {
-    addPlayers(count, Altruist(_, this))
+  def withCooperator(count: Int): Community = {
+    addPlayers(count, Cooperator(_, this))
     this
   }
 
@@ -105,7 +92,7 @@ case class Community(amount: Double) {
   }
 
   private def updateStatistics(roundIndex: Int): Unit = {
-    statistics ++= players.map(player => Stat(roundIndex, player.personality, player.emotions, player.amount, player.lastPayIn, player.lastPayoff))
+    statistics ++= players.map(player => Stat(roundIndex, player.personality, player.emotions.all.map(_.toStat), player.amount, player.lastPayIn, player.lastPayoff, president))
   }
 
   def getStats: Stats = Stats(statistics.sortBy(_.round))
