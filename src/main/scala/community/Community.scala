@@ -49,7 +49,7 @@ case class Community(amount: Double) {
   def voting(): Unit = {
     val votes = players.flatMap(_.vote).groupBy(identity).mapValues(_.size).toList
     if (votes.nonEmpty)
-      president = Some(candidates(votes.maxBy(_._2)._1))
+      president = candidates.find(_.id == votes.maxBy(_._2)._1)
   }
 
   def play(rounds: Int): Unit = {
@@ -92,7 +92,14 @@ case class Community(amount: Double) {
   }
 
   private def updateStatistics(roundIndex: Int): Unit = {
-    statistics ++= players.map(player => Stat(roundIndex, player.personality, player.emotions.all.map(_.toStat), player.amount, player.lastPayIn, player.lastPayoff, president))
+    statistics ++= players.map(player =>
+      Stat(
+        roundIndex, player.personality,
+        player.emotions.all.map(_.toStat),
+        player.amount, player.lastPayIn, player.lastPayoff,
+        player.candidatesSympathize.mapValues(_.getLevel).toList
+      )
+    )
   }
 
   def getStats: Stats = Stats(statistics.sortBy(_.round))

@@ -39,10 +39,4 @@ case class Intelligent(id: String, community: Community) extends Player {
     net.init()
     net
   }
-
-  override def vote: Option[Int] = None
-
-  override def updateSympathize: Unit = {
-
-  }
 }

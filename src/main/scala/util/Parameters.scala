@@ -17,12 +17,13 @@ object Parameters {
 
   object Community {
     var multiplier: Double = 1.1
-    var impostors: Int = 500
-    var cooperators: Int = 500
-    var ordinaries: Int = 500
+    var impostors: Int = 50
+    var cooperators: Int = 50
+    var ordinaries: Int = 50
     var democrats: Int = 1
     var republicans: Int = 1
-    var rounds: Int = 500
+    var rounds: Int = 50
+    var voting: Int = 5
     val amount: Double = 10.0
     var b1: (Double, Double) = (1.5, 0.75)
     var b2: (Double, Double) = (0.75, 1.5)

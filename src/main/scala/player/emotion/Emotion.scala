@@ -28,7 +28,7 @@ abstract class Emotion {
 
   protected def worse(): Unit
 
-  protected def change(value: Double): Unit = {
+  def change(value: Double): Unit = {
     if (value > Emotion.min && value < Emotion.max) level = value
   }
 

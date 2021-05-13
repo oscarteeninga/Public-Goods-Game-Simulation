@@ -15,9 +15,19 @@ trait Player {
 
   val candidatesSympathize: Map[String, Sympathize] = community.candidates.map(candidate => (candidate.id, Sympathize())).toMap
 
-  def vote: Option[Int]
-  def updateSympathize: Unit
+  def vote: Option[String] = {
+    Some(candidatesSympathize.maxBy(_._2.getLevel)._1)
+  }
 
+  def updateSympathize: Unit = {
+    community.president match {
+      case Some(president) =>
+        candidatesSympathize(president.id).update(lastPayIn, lastPayoff)
+        candidatesSympathize.filterNot(_._1 == president.id).foreach(_._2.idle())
+      case None =>
+        candidatesSympathize.values.foreach(_.update(Random.nextDouble(), Random.nextDouble()))
+    }
+  }
   var amount: Double = community.amount
   var lastPayoff: Double = amount / 2
   var lastPayIn: Double = amount / 2

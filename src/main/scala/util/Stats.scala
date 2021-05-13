@@ -1,4 +1,5 @@
 package util
+import scala.collection.immutable
 
 case class Stats(stats: List[Stat]) {
 
@@ -44,6 +45,12 @@ case class Stats(stats: List[Stat]) {
 
   def emotionsToAmount: List[(String, List[(Double, Double)])] = {
     List("angry" -> emotionToAmount(0), "thankfulness" -> emotionToAmount(1))
+  }
+
+  def averageCandidatesSympathizeToRound: List[(String, List[(Double, Double)])] = {
+    stats.flatMap {
+      stat => stat.sympathize.map { case (id, level) => (stat.round, id, level) }
+    }.groupBy(_._2).mapValues(_.map(x => (x._1.toDouble, x._3)).groupBy(_._1).toList.sortBy(_._1).toMap.mapValues(_.sortBy(_._1).map(_._2).sum).toList).toList
   }
 
   override def toString: String = {
