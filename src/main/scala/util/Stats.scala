@@ -48,9 +48,10 @@ case class Stats(stats: List[Stat]) {
   }
 
   def averageCandidatesSympathizeToRound: List[(String, List[(Double, Double)])] = {
-    stats.flatMap {
+    val avg = stats.flatMap {
       stat => stat.sympathize.map { case (id, level) => (stat.round, id, level) }
-    }.groupBy(_._2).mapValues(_.map(x => (x._1.toDouble, x._3)).groupBy(_._1).toList.sortBy(_._1).toMap.mapValues(_.sortBy(_._1).map(_._2).sum).toList).toList
+    }.groupBy(_._2).mapValues(_.map(x => (x._1.toDouble, x._3)).groupBy(_._1).mapValues(_.map(_._2).sum).toList.sortBy(_._1)).toList
+    avg
   }
 
   override def toString: String = {

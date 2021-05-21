@@ -23,7 +23,7 @@ object Parameters {
     var democrats: Int = 1
     var republicans: Int = 1
     var rounds: Int = 50
-    var voting: Int = 5
+    var voting: Int = 2
     val amount: Double = 10.0
     var b1: (Double, Double) = (1.5, 0.75)
     var b2: (Double, Double) = (0.75, 1.5)

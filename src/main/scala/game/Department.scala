@@ -12,11 +12,10 @@ object Department extends App {
     .withOrdinary(Parameters.Community.ordinaries)
 
 
-  (1 to Parameters.Community.voting).foreach { voting =>
-    manhattan.play(Parameters.Community.rounds/voting)
+  (1 to Parameters.Community.voting).foreach { _ =>
+    manhattan.play(Parameters.Community.rounds)
     manhattan.voting()
   }
-//  manhattan.voting()
 
 //  Plot.plot_scatter(manhattan.getStats.emotionsToAmount, "Emotion intense", "Amount", manhattan.config)
 //  Plot.plot_scatter(manhattan.getStats.emotionsToPayIn, "Emotion intense", "Pay in", manhattan.config)

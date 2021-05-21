@@ -13,6 +13,8 @@ case class Community(amount: Double) {
   var b1: (Double, Double) = Parameters.Community.b1
   var b2: (Double, Double) = Parameters.Community.b2
 
+  var rounds = 0
+
   def size: Int = players.size
 
   def players: List[Player] = candidates ++ citizen
@@ -40,10 +42,11 @@ case class Community(amount: Double) {
     }
   }
 
-  def round(roundIndex: Int): Unit = {
-    updateStatistics(roundIndex)
+  def round(): Unit = {
+    updateStatistics(rounds)
     val pot = multiplier * payIns()
     payouts(payPresident(pot))
+    rounds += 1
   }
 
   def voting(): Unit = {
@@ -53,7 +56,7 @@ case class Community(amount: Double) {
   }
 
   def play(rounds: Int): Unit = {
-    (statistics.size to (rounds + statistics.size)).toList.foreach(idx => round(idx))
+    (1 to rounds).foreach(_ => round())
   }
 
   def withCooperator(count: Int): Community = {
@@ -94,7 +97,8 @@ case class Community(amount: Double) {
   private def updateStatistics(roundIndex: Int): Unit = {
     statistics ++= players.map(player =>
       Stat(
-        roundIndex, player.personality,
+        roundIndex,
+        player.personality,
         player.emotions.all.map(_.toStat),
         player.amount, player.lastPayIn, player.lastPayoff,
         player.candidatesSympathize.mapValues(_.getLevel).toList
