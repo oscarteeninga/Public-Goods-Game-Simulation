@@ -2,6 +2,8 @@ package player.emotion
 
 import util.Parameters.Emotion
 
+import scala.util.Random
+
 case class Sympathize() extends Emotion {
 
   override def update(payIn: Double, payOut: Double): Unit = {
@@ -13,5 +15,5 @@ case class Sympathize() extends Emotion {
 
   override protected def worse(): Unit = change(level-Emotion.step)
 
-  def idle(): Unit = change(level+Emotion.step/3)
+  def idle(): Unit = change(level + Random.nextDouble() * Emotion.step)
 }
