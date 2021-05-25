@@ -16,23 +16,24 @@ trait Player {
   val candidatesSympathize: Map[String, Sympathize] = community.candidates.map(candidate => (candidate.id, Sympathize())).toMap
 
   def vote: Option[String] = {
-    Some(candidatesSympathize.maxBy(_._2.getLevel)._1)
+    if (candidatesSympathize.isEmpty) None
+    else Some(candidatesSympathize.maxBy(_._2.getLevel)._1)
   }
 
   def updateSympathize: Unit = {
     community.president match {
       case Some(president) =>
         candidatesSympathize(president.id).update(lastPayIn, lastPayoff)
-        candidatesSympathize.filterNot(_._1 == president.id).foreach(_._2.idle())
+        candidatesSympathize.filterNot(_._1 == president.id).foreach(_._2.randomize())
       case None =>
-        candidatesSympathize.values.foreach(_.update(Random.nextDouble(), Random.nextDouble()))
+        candidatesSympathize.values.foreach(_.randomize())
     }
   }
   var amount: Double = community.amount
-  var lastPayoff: Double = amount / 2
-  var lastPayIn: Double = amount / 2
+  var lastPayoff: Double = amount / 5
+  var lastPayIn: Double = amount / 5
 
-  var emotions: Emotions = Emotions(List(Angry()), List(Thankfulness()))
+  var emotions: Emotions = Emotions(List(Thankfulness()), List(Angry()))
 
   private def updateEmotions: Unit = {
     emotions.update(lastPayIn, lastPayoff)
@@ -45,21 +46,17 @@ trait Player {
     updateSympathize
   }
 
-  protected def randomFactor: Double = (2 + (0.5 - Random.nextDouble())) / 2
+  protected def randomFactor: Double = (3 + (0.5 - Random.nextDouble())) / 3
 
-  private def factor: Double = randomFactor * emotions.emotionFactor
+  protected def emotionFactor: Double = emotions.emotionFactor
+
+  protected def contributionFactor: Double = personality.contribution
+
+  private def factor: Double = randomFactor * emotionFactor * contributionFactor
 
   protected def contribution: Double = {
-    min(amount,  factor * max(b1 * lastPayoff + b2 * (lastPayIn * community.size - lastPayoff) / (community.size - 1), 0))
+    min(amount, max(factor * lastPayIn, 0))
   }
-
-  def b(factors: (Double, Double)): Double = {
-    abs(this.personality.altruism * factors._1 + this.personality.egoism * factors._2) / 2
-  }
-
-  def b1: Double = b(community.b1)
-
-  def b2: Double = b(community.b2)
 
   def payIn: Double = {
     lastPayIn = contribution

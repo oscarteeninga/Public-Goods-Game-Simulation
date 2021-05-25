@@ -1,22 +1,29 @@
 package player.emotion
 
-import util.Parameters.Emotion
+import util.Parameters.{Community, Emotion}
 
 import scala.util.Random
 
 abstract class Emotion {
 
-  protected var level: Double = (Emotion.max - Emotion.min) / 2
+  protected var level: Double = Emotion.defaultLevel
 
-  def getLevel: Double = level.doubleValue()
+  def getLevel: Double = level
 
-  def update(payIn: Double, payOut: Double): Unit = {
-    if (payIn * 1.5 < payOut) better()
-    else if (payIn > 1.5 * payOut) worse()
-    else randomize()
+  def step: Double = {
+    val distance = Math.abs(Emotion.defaultLevel - level)
+    10.0*Emotion.step/(Emotion.defaultLevel*(1+distance) + distance)/Community.rounds
   }
 
-  protected def randomize(): Unit = {
+  def update(payIn: Double, payOut: Double): Unit = {
+    if (payIn < payOut) {
+      if (Random.nextDouble() > 0.05) better() else worse()
+    } else {
+      if (Random.nextDouble() > 0.05) worse() else better()
+    }
+  }
+
+  def randomize(): Unit = {
     Math.abs(Random.nextInt()) % Emotion.randomization match {
       case 0 => better()
       case 1 => worse()
@@ -24,12 +31,16 @@ abstract class Emotion {
     }
   }
 
-  protected def better(): Unit
+  protected def better(): Unit = {
+    change(step)
+  }
 
-  protected def worse(): Unit
+  protected def worse(): Unit = {
+    change(-step)
+  }
 
   def change(value: Double): Unit = {
-    if (value > Emotion.min && value < Emotion.max) level = value
+    level += value
   }
 
   def toStat: (String, Double) = (getClass.getSimpleName, level)

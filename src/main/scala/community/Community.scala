@@ -10,18 +10,14 @@ case class Community(amount: Double) {
   var president: Option[Candidate] = None
   var citizen: List[Player] = Nil
   var statistics:  List[Stat] = List.empty
-  var b1: (Double, Double) = Parameters.Community.b1
-  var b2: (Double, Double) = Parameters.Community.b2
 
-  var rounds = 0
+  var rounds = 1
 
   def size: Int = players.size
 
   def players: List[Player] = candidates ++ citizen
 
-  def multiplier: Double = {
-    president.map(_.multiplier).getOrElse(Parameters.Community.multiplier)
-  }
+  def multiplier: Double = 2.0
 
   private def payIns(): Double = {
     players.map(_.payIn).sum

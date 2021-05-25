@@ -10,8 +10,6 @@ case class Republican(id: String, community: Community) extends Candidate {
 
   override def action: Unit = {}
 
-  override def multiplier: Double = 1.2
-
-  override def salary: Double = 0.0
+  override def salary: Double = 7.5
 
 }
