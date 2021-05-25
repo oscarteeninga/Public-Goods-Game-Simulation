@@ -3,6 +3,7 @@ package player
 import community.Community
 import player.emotion.{Angry, Emotions, Sympathize, Thankfulness}
 import player.personality.Personality
+import util.Parameters
 
 import scala.math.{abs, max, min}
 import scala.util.Random
@@ -30,8 +31,8 @@ trait Player {
     }
   }
   var amount: Double = community.amount
-  var lastPayoff: Double = amount / 5
-  var lastPayIn: Double = amount / 5
+  var lastPayoff: Double = Parameters.Community.payIn
+  var lastPayIn: Double = Parameters.Community.payIn
 
   var emotions: Emotions = Emotions(List(Thankfulness()), List(Angry()))
 
@@ -46,7 +47,7 @@ trait Player {
     updateSympathize
   }
 
-  protected def randomFactor: Double = (3 + (0.5 - Random.nextDouble())) / 3
+  protected def randomFactor: Double = (10 + (0.5 - Random.nextDouble())) / 10
 
   protected def emotionFactor: Double = emotions.emotionFactor
 
@@ -55,7 +56,7 @@ trait Player {
   private def factor: Double = randomFactor * emotionFactor * contributionFactor
 
   protected def contribution: Double = {
-    min(amount, max(factor * lastPayIn, 0))
+    min(amount, max(factor * Parameters.Community.payIn, 0))
   }
 
   def payIn: Double = {

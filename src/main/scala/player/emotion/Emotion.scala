@@ -12,11 +12,11 @@ abstract class Emotion {
 
   def step: Double = {
     val distance = Math.abs(Emotion.defaultLevel - level)
-    10.0*Emotion.step/(Emotion.defaultLevel*(1+distance) + distance)/Community.rounds
+    Emotion.step/(Emotion.defaultLevel * (1 + distance))
   }
 
   def update(payIn: Double, payOut: Double): Unit = {
-    if (payIn < payOut) {
+    if (payIn * Community.multiplier < payOut) {
       if (Random.nextDouble() > 0.05) better() else worse()
     } else {
       if (Random.nextDouble() > 0.05) worse() else better()
