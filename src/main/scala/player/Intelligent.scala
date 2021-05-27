@@ -9,11 +9,11 @@ import org.nd4j.linalg.activations.Activation
 import org.nd4j.linalg.learning.config.Adam
 import org.nd4j.linalg.lossfunctions.LossFunctions
 import player.personality.Personality
-import player.personality.Personality.Neutral
+import player.personality.Personality.OrdinaryPersonality
 
 case class Intelligent(id: String, community: Community) extends Player {
 
-  override val personality: Personality = Neutral
+  override val personality: Personality = OrdinaryPersonality
 
   lazy val network: MultiLayerNetwork = {
     val conf = new NeuralNetConfiguration.Builder()

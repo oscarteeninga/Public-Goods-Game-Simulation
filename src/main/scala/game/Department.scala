@@ -5,11 +5,11 @@ import util.{Parameters, Plot}
 
 object Department extends App {
   val manhattan = Community(Parameters.Community.amount)
+    .withDemocrat
+    .withRepublican
     .withCooperator(Parameters.Community.cooperators)
     .withImpostor(Parameters.Community.impostors)
     .withOrdinary(Parameters.Community.ordinaries)
-    .withDemocrat
-    .withRepublican
 
 
   (1 to Parameters.Community.voting).foreach { _ =>

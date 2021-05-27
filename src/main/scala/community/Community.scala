@@ -17,7 +17,7 @@ case class Community(amount: Double) {
 
   def players: List[Player] = candidates ++ citizen
 
-  def multiplier: Double = 2.0
+  def multiplier: Double = Parameters.Community.multiplier
 
   private def payIns(): Double = {
     players.map(_.payIn).sum
@@ -100,6 +100,7 @@ case class Community(amount: Double) {
         player.candidatesSympathize.mapValues(_.getLevel).toList
       )
     )
+    print(statistics)
   }
 
   def getStats: Stats = Stats(statistics.sortBy(_.round))

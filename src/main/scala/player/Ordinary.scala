@@ -2,12 +2,12 @@ package player
 
 import community.Community
 import player.personality.Personality
-import player.personality.Personality.Neutral
+import player.personality.Personality.OrdinaryPersonality
 
 import scala.util.Random
 
 case class Ordinary(id: String, community: Community) extends Player {
-  override val personality: Personality = Neutral
+  override val personality: Personality = OrdinaryPersonality
 
   override def vote: Option[String] = {
     if (Random.nextDouble() > 0.25 && candidatesSympathize.nonEmpty)

@@ -15,9 +15,9 @@ case class Personality(contribution: Double) {
 
 object Personality {
 
-  object Altruistic extends Personality(Parameters.Personality.max)
-  object Egoistic extends Personality(Parameters.Personality.min)
-  object Neutral extends Personality(Parameters.Personality.neutral)
+  object CooperatorPersonality extends Personality(Parameters.Personality.max)
+  object ImpostorPersonality extends Personality(Parameters.Personality.min)
+  object OrdinaryPersonality extends Personality(Parameters.Personality.neutral)
 
-  lazy val personalities: Seq[Personality] = Seq(Altruistic, Egoistic, Neutral)
+  lazy val personalities: Seq[Personality] = Seq(CooperatorPersonality, ImpostorPersonality, OrdinaryPersonality)
 }

@@ -1,5 +1,4 @@
 package util
-import scala.collection.immutable
 
 case class Stats(stats: List[Stat]) {
 
