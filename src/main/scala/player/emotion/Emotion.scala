@@ -16,7 +16,7 @@ abstract class Emotion {
   }
 
   def update(payIn: Double, payOut: Double): Unit = {
-    if (payIn * Community.multiplier < payOut) {
+    if (payIn * Community.multiplier * Emotion.threshold < payOut) {
       if (Random.nextDouble() > 0.05) better() else worse()
     } else {
       if (Random.nextDouble() > 0.05) worse() else better()

@@ -100,7 +100,6 @@ case class Community(amount: Double) {
         player.candidatesSympathize.mapValues(_.getLevel).toList
       )
     )
-    print(statistics)
   }
 
   def getStats: Stats = Stats(statistics.sortBy(_.round))
