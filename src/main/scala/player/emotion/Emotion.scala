@@ -1,49 +1,44 @@
 package player.emotion
 
-import util.Parameters.{Community, Emotion}
+import util.Parameters
+import util.Parameters.Emotion
 
 import scala.util.Random
 
-abstract class Emotion {
+abstract class Emotion(isPositive: Boolean) {
 
-  protected var level: Double = Emotion.defaultLevel
+  def updateLevel(payIn: Double, payOut: Double): Unit
 
-  def getLevel: Double = level
+  protected var level: Double = Parameters.Emotion.defaultLevel
 
-  def step: Double = {
-    val distance = Math.abs(Emotion.defaultLevel - level)
-    Emotion.step/(Emotion.defaultLevel * (1 + distance))
-  }
+  private val step = Parameters.Emotion.step
 
-  def update(payIn: Double, payOut: Double): Unit = {
-    if (payIn * Community.multiplier * Emotion.threshold < payOut) {
-      if (Random.nextDouble() > 0.05) better() else worse()
-    } else {
-      if (Random.nextDouble() > 0.05) worse() else better()
-    }
-  }
+  private val sign: Double = if (isPositive) 1.0 else -1.0
+
+  // It's between 0.5 and 1.5
+  def getFactor: Double = Math.atan(sign*level)/Math.PI + 1
 
   def randomize(): Unit = {
     Math.abs(Random.nextInt()) % Emotion.randomization match {
-      case 0 => better()
-      case 1 => worse()
+      case 0 => level += step
+      case 1 => level -= step
       case _ =>
     }
   }
 
-  protected def better(): Unit = {
-    change(step)
-  }
+  def toStat: (String, Double) = (getClass.getSimpleName, getFactor)
+}
 
-  protected def worse(): Unit = {
-    change(-step)
+case class Angry() extends Emotion(false) {
+  override def updateLevel(payIn: Double, payOut: Double): Unit = {
+    level += Parameters.Emotion.step * (if (payIn > payOut) 1 else -1)
   }
+}
 
-  def change(value: Double): Unit = {
-    level += value
+case class Sympathize(candidateId: Int) extends Emotion(true) {
+  override def updateLevel(payIn: Double, payOut: Double): Unit = {
+    level += Parameters.Emotion.step * (if (payIn > payOut) 1 else -1)
   }
-
-  def toStat: (String, Double) = (getClass.getSimpleName, level)
 }
 
 

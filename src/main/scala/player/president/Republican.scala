@@ -4,12 +4,12 @@ import community.Community
 import player.personality.Personality
 import player.personality.Personality.ImpostorPersonality
 
-case class Republican(id: String, community: Community) extends Candidate {
+case class Republican(id: Int, community: Community) extends Candidate {
 
   override val personality: Personality = ImpostorPersonality
 
-  override def action: Unit = {}
+  override def action(): Unit = {}
 
-  override def salary: Double = community.players.size * 0.5
+  override def salary: Double = 1.0
 
 }

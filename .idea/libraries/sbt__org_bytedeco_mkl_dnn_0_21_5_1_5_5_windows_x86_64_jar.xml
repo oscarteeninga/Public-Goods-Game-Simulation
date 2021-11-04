@@ -1,7 +1,8 @@
 <component name="libraryTable">
   <library name="sbt: org.bytedeco:mkl-dnn:0.21.5-1.5.5:windows-x86_64:jar">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../../../../Caches/Coursier/v1/https/repo1.maven.org/maven2/org/bytedeco/mkl-dnn/0.21.5-1.5.5/mkl-dnn-0.21.5-1.5.5-windows-x86_64.jar!/" />
+      <root url="jar://$USER_HOME$/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/bytedeco/mkl-dnn/0.21.5-1.5.5/mkl-dnn-0.21.5-1.5.5-windows-x86_64.jar!/" />
+      <root url="jar://$USER_HOME$/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/bytedeco/mkl-dnn/0.21.5-1.5.5/mkl-dnn-0.21.5-1.5.5-windows-x86_64.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

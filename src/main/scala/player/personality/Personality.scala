@@ -1,7 +1,5 @@
 package player.personality
 
-import util.Parameters
-
 case class Personality(contribution: Double) {
 
   lazy val features = Seq(contribution)
@@ -15,9 +13,11 @@ case class Personality(contribution: Double) {
 
 object Personality {
 
-  object CooperatorPersonality extends Personality(Parameters.Personality.max)
-  object ImpostorPersonality extends Personality(Parameters.Personality.min)
-  object OrdinaryPersonality extends Personality(Parameters.Personality.neutral)
+  object CooperatorPersonality extends Personality(1.25)
+
+  object ImpostorPersonality extends Personality(0.75)
+
+  object OrdinaryPersonality extends Personality(1.0)
 
   lazy val personalities: Seq[Personality] = Seq(CooperatorPersonality, ImpostorPersonality, OrdinaryPersonality)
 }

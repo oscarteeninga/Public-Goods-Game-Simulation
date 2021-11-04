@@ -1,69 +1,37 @@
 package player
 
 import community.Community
-import player.emotion.{Angry, Emotions, Sympathize, Thankfulness}
+import player.emotion.{Angry, Emotion}
 import player.personality.Personality
 import util.Parameters
 
-import scala.math.{abs, max, min}
-import scala.util.Random
+import scala.math.{max, min}
 
 trait Player {
 
-  val id: String
+  val id: Int
   val personality: Personality
   val community: Community
 
-  val candidatesSympathize: Map[String, Sympathize] = community.candidates.map(candidate => (candidate.id, Sympathize())).toMap
+  val emotions: List[Emotion] = List(Angry(), Angry())
 
-  def vote: Option[String] = {
-    if (candidatesSympathize.isEmpty) None
-    else Some(candidatesSympathize.maxBy(_._2.getLevel)._1)
-  }
-
-  def updateSympathize: Unit = {
-    community.president match {
-      case Some(president) =>
-        candidatesSympathize(president.id).update(lastPayIn, lastPayoff)
-        candidatesSympathize.filterNot(_._1 == president.id).foreach(_._2.randomize())
-      case None =>
-        candidatesSympathize.values.foreach(_.randomize())
-    }
-  }
   var amount: Double = community.amount
   var lastPayoff: Double = Parameters.Community.payIn
   var lastPayIn: Double = Parameters.Community.payIn
 
-  var emotions: Emotions = Emotions(List(Thankfulness()), List(Angry()))
-
-  private def updateEmotions: Unit = {
-    emotions.update(lastPayIn, lastPayoff)
-  }
-
   def payout(payoff: Double): Unit = {
     lastPayoff = payoff
     amount += payoff
-    updateEmotions
-    updateSympathize
-  }
-
-  protected def randomFactor: Double = (10 + (0.5 - Random.nextDouble())) / 10
-
-  protected def emotionFactor: Double = emotions.emotionFactor
-
-  protected def contributionFactor: Double = personality.contribution
-
-  private def factor: Double = randomFactor * emotionFactor * contributionFactor
-
-  protected def contribution: Double = {
-    min(amount, max(factor * Parameters.Community.payIn, 0))
+    emotions.foreach(_.updateLevel(lastPayIn, lastPayoff))
   }
 
   def payIn: Double = {
-    lastPayIn = contribution
+    lastPayIn = min(amount, max(emotionFactor * personality.contribution * amount * 0.5, 0))
     amount -= lastPayIn
     lastPayIn
   }
+
+  protected def emotionFactor: Double = emotions.foldLeft(1.0)((f, emotion) => f * emotion.getFactor)
 
   override def toString: String = {
     getClass.getSimpleName + id + ":\t" + amount
