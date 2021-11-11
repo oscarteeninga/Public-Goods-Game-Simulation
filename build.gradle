@@ -1,0 +1,29 @@
+plugins {
+    id 'scala'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+def versions = [
+        ScalaBinary: "2.13"
+]
+
+dependencies {
+    implementation 'org.scala-lang:scala-library:2.13.7'
+    implementation 'org.slf4j:slf4j-log4j12:1.7.32'
+    implementation 'org.plotly-scala:plotly-render_2.13:0.8.2'
+    implementation "com.typesafe.akka:akka-actor-typed_${versions.ScalaBinary}"
+    implementation platform("com.typesafe.akka:akka-bom_${versions.ScalaBinary}:2.6.17")
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+}
+
+test {
+    useJUnitPlatform()
+}
